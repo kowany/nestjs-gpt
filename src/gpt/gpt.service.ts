@@ -2,12 +2,14 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {
+  audioToTextUseCase,
   orthographyCheckUseCase,
   prosConsDicusserStreamUseCase,
   prosConsDicusserUseCase,
   textToAudioUseCase,
 } from './use-cases';
 import {
+  AudioToTextDto,
   OrthograpyDto,
   ProsConsDiscusserDto,
   TextToAudioDto,
@@ -57,5 +59,13 @@ export class GptService {
       throw new NotFoundException(`File ${fileId['fileId']}.mp3 not found}`);
 
     return filePath;
+  }
+
+  async audioToText(
+    audioFile: Express.Multer.File,
+    audioToTextDto: AudioToTextDto,
+  ) {
+    const { prompt } = audioToTextDto;
+    return await audioToTextUseCase(this.openai, { audioFile, prompt });
   }
 }
